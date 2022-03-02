@@ -14,6 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalMatchers.and;
 import static org.mockito.AdditionalMatchers.or;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
 
 /**
@@ -45,14 +46,18 @@ class SpecialitySDJpaServiceTest {
     @Test
     void findByIdBddTest() {
 
+        // Given
         Speciality speciality = new Speciality();
-
         given(specialtyRepository.findById(anyLong())).willReturn(Optional.of(speciality));
 
+        // When
         Speciality foundSpeciality = specialitySDJpaService.findById(1L);
 
+        // Then
         assertThat(foundSpeciality).isNotNull();
-        verify(specialtyRepository).findById(anyLong());
+        then(specialtyRepository).should().findById(anyLong());
+        then(specialtyRepository).should(times(1)).findById(anyLong());
+        then(specialtyRepository).shouldHaveNoMoreInteractions();
     }
 
     @Test
