@@ -13,6 +13,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalMatchers.and;
 import static org.mockito.AdditionalMatchers.or;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 /**
@@ -42,6 +43,19 @@ class SpecialitySDJpaServiceTest {
     }
 
     @Test
+    void findByIdBddTest() {
+
+        Speciality speciality = new Speciality();
+
+        given(specialtyRepository.findById(anyLong())).willReturn(Optional.of(speciality));
+
+        Speciality foundSpeciality = specialitySDJpaService.findById(1L);
+
+        assertThat(foundSpeciality).isNotNull();
+        verify(specialtyRepository).findById(anyLong());
+    }
+
+    @Test
     void deleteByObjectTest() {
 
         Speciality speciality = new Speciality();
@@ -59,6 +73,8 @@ class SpecialitySDJpaServiceTest {
     @Test
     void delete() {
         specialitySDJpaService.delete(new Speciality());
+
+        verify(specialtyRepository).delete(any(Speciality.class));
     }
 
     @Test
