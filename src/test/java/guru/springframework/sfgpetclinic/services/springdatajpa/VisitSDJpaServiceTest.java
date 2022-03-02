@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalMatchers.and;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.*;
+import static org.mockito.BDDMockito.*;
 
 /**
  * @author : eanani
@@ -49,15 +49,16 @@ class VisitSDJpaServiceTest {
         @Test
         void findAll() {
 
+            // Given
             Set<Visit> visits = new HashSet<>();
             visits.add(visit);
+            given(visitRepository.findAll()).willReturn(visits);
 
-            when(visitRepository.findAll()).thenReturn(visits);
-
+            // When
             Set<Visit> foundVisits = service.findAll();
 
-            verify(visitRepository).findAll();
-
+            // Then
+            then(visitRepository).should().findAll();
             assertThat(foundVisits)
                     .hasSize(1)
                     .containsAll(Set.of(visit));
@@ -67,12 +68,14 @@ class VisitSDJpaServiceTest {
         @Test
         void findById() {
 
-            when(visitRepository.findById(anyLong())).thenReturn(Optional.of(visit));
+            // Given
+            given(visitRepository.findById(anyLong())).willReturn(Optional.of(visit));
 
+            // When
             Visit foundVisit = service.findById(1L);
 
-            verify(visitRepository).findById(anyLong());
-
+            // Then
+            then(visitRepository).should().findById(anyLong());
             assertThat(foundVisit)
                     .isNotNull()
                     .hasAllNullFieldsOrProperties()
@@ -83,11 +86,14 @@ class VisitSDJpaServiceTest {
         @Test
         void save() {
 
-            when(visitRepository.save(any(Visit.class))).thenReturn(visit);
+            // Given
+            given(visitRepository.save(any(Visit.class))).willReturn(visit);
 
+            // When
             Visit savedVisit = service.save(new Visit());
 
-            verify(visitRepository).save(any(Visit.class));
+            // Then
+            then(visitRepository).should().save(any(Visit.class));
             assertThat(savedVisit)
                     .isNotNull()
                     .hasAllNullFieldsOrProperties()
@@ -98,11 +104,14 @@ class VisitSDJpaServiceTest {
         @Test
         void delete() {
 
-            doNothing().when(visitRepository).delete(and(isNotNull(), isA(Visit.class)));
+            // Given
+            willDoNothing().given(visitRepository).delete(and(isNotNull(), isA(Visit.class)));
 
+            // When
             service.delete(visit);
 
-            verify(visitRepository).delete(any(Visit.class));
+            // Then
+            then(visitRepository).should().delete(any(Visit.class));
         }
     }
 
@@ -110,10 +119,11 @@ class VisitSDJpaServiceTest {
     @Test
     void deleteById() {
 
-        doNothing().when(visitRepository).deleteById(and(isNotNull(), isA(Long.class)));
+        // Given
+        willDoNothing().given(visitRepository).deleteById(and(isNotNull(), isA(Long.class)));
 
         service.deleteById(1L);
 
-        verify(visitRepository).deleteById(anyLong());
+        then(visitRepository).should().deleteById(anyLong());
     }
 }
