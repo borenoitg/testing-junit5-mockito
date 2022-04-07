@@ -16,7 +16,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.*;
 
 /**
  * @author : eanani
@@ -88,6 +88,7 @@ class OwnerControllerTest {
         // Then
         assertThat(stringArgumentCaptor.getValue()).isEqualToIgnoringCase("%Buck%");
         assertThat(viewName).isEqualToIgnoringCase(REDIRECT_OWNERS_5);
+        verifyNoInteractions(model);
     }
 
     @Test
@@ -102,6 +103,7 @@ class OwnerControllerTest {
         // Then
         assertThat(stringArgumentCaptor.getValue()).isEqualToIgnoringCase("%dontFindMe%");
         assertThat(viewName).isEqualToIgnoringCase(OWNERS_FIND_OWNERS);
+        verifyNoInteractions(model);
     }
 
     @Test
@@ -120,7 +122,8 @@ class OwnerControllerTest {
 
         // InOrder Asserts
         inOrder.verify(ownerService).findAllByLastNameLike(anyString());
-        inOrder.verify(model).addAttribute(anyString(), anyList());
+        inOrder.verify(model, times(1)).addAttribute(anyString(), anyList());
+        verifyNoMoreInteractions(model, ownerService);
     }
 
     @Test
@@ -135,6 +138,7 @@ class OwnerControllerTest {
 
         // Then
         assertThat(viewName).isEqualToIgnoringCase(OWNERS_CREATE_OR_UPDATE_OWNER_FORM);
+        verifyNoInteractions(model);
     }
 
     @Test
@@ -150,5 +154,6 @@ class OwnerControllerTest {
 
         // Then
         assertThat(viewName).isEqualToIgnoringCase(REDIRECT_OWNERS_5);
+        verifyNoInteractions(model);
     }
 }
